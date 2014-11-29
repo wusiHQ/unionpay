@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class UnionPay::ServiceTest < Test::Unit::TestCase
+class UnionPay::ServiceTest < MiniTest::Test
   def generate_form
     param = {}
     param['transType']     = UnionPay::CONSUME                         #交易类型，CONSUME or PRE_AUTH
