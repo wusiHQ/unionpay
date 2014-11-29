@@ -23,7 +23,7 @@ module UnionPay
           self.args = PayParamsEmpty.merge(PayParams).merge(param)
           @param_check = UnionPay::PayParamsCheck
         else
-          # 前台交易仅支持 消费 和 预授权
+          #Bad trans_type for front_pay. Use back_pay instead
           raise("Bad trans_type for front_pay. Use back_pay instead")
         end
         service
@@ -39,13 +39,6 @@ module UnionPay
         self.args = PayParamsEmpty.merge(PayParams).merge(param)
         @param_check = PayParamsCheck
         trans_type = param['transType']
-        if [UnionPay::CONSUME, UnionPay::PRE_AUTH].include? trans_type
-          if !self.args['cardNumber'] && !self.args['pan']
-            raise('consume OR pre_auth transactions need cardNumber!')
-          end
-        else
-          raise('origQid is not provided') if UnionPay.empty? self.args['origQid']
-        end
         service
       end
     end
