@@ -3,6 +3,7 @@ require 'open-uri'
 require 'digest'
 require 'rack'
 require 'net/http'
+
 module UnionPay
   RESP_SUCCESS  = '00' #返回成功
   QUERY_SUCCESS = '0' #查询成功
@@ -45,25 +46,14 @@ module UnionPay
 
     def self.response(param)
       new.instance_eval do
-        if param.is_a? String
-          pattern = /(?<=cupReserved=)(\{.*?\})/
-          cup_reserved = pattern.match(param).to_s
-          param.sub! pattern, ''
-          param = Rack::Utils.parse_nested_query param
-          param['cupReserved'] = cup_reserved
-        end
-        cup_reserved ||= (param['cupReserved'] ||= '')
-        arr_reserved = Rack::Utils.parse_nested_query cup_reserved[1..-2]
         if !param['signature'] || !param['signMethod']
           raise('No signature Or signMethod set in notify data!')
         end
-
-        param.delete 'signMethod'
+        param.delete('signMethod')
         if param.delete('signature') != Service.sign(param)
           raise('Bad signature returned!')
         end
-        self.args = param.merge arr_reserved
-        self.args.delete 'cupReserved'
+        self.args = param
         self
       end
     end

@@ -56,31 +56,17 @@ module UnionPay
   PayParamsCheck = [
     "version",
     "charset",
+    "signMethod",
+    "signature",
     "transType",
-    "origQid",
     "merId",
-    "merAbbr",
-    "acqCode",
-    "merCode",
-    "commodityUrl",
-    "commodityName",
-    "commodityUnitPrice",
-    "commodityQuantity",
-    "commodityDiscount",
-    "transferFee",
+    "backEndUrl",
+    "orderTime",
     "orderNumber",
     "orderAmount",
-    "orderCurrency",
-    "orderTime",
-    "customerIp",
-    "customerName",
-    "defaultPayType",
-    "defaultBankNumber",
-    "transTimeout",
-    "frontEndUrl",
-    "backEndUrl",
-    "merReserved"
+    "orderDescription"
   ]
+
 
   # 查询请求必填字段检查
   QueryParamsCheck = [
@@ -138,6 +124,7 @@ module UnionPay
   ]
 
   SignIgnoreParams = [
-    "bank",
+    "signature",
+    "signMethod"
   ]
 end
