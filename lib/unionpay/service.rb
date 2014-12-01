@@ -107,21 +107,6 @@ module UnionPay
 
     private
     def service
-      if self.args['commodityUrl']
-        self.args['commodityUrl'] = URI::encode(self.args['commodityUrl'])
-      end
-
-      arr_reserved = []
-      UnionPay::MerParamsReserved.each do |k|
-        arr_reserved << "#{k}=#{self.args.delete k}" if self.args.has_key? k
-      end
-
-      if arr_reserved.any?
-        self.args['merReserved'] = arr_reserved.join('&')
-      else
-        self.args['merReserved'] ||= ''
-      end
-
       @param_check.each do |k|
         raise("KEY [#{k}] not set in params given") unless self.args.has_key? k
       end
