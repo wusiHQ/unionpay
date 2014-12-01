@@ -5,7 +5,7 @@ require File.dirname(__FILE__) + '/unionpay/utils'
 
 module UnionPay
   class << self
-    attr_accessor :mer_id, :security_key, :mer_abbr, :environment, :version, :charset
+    attr_accessor :mer_id, :security_key, :mer_abbr, :environment, :version, :charset, :backend_url
 
     def mer_id= v
       UnionPay::PayParams['merId'] = v
@@ -21,6 +21,10 @@ module UnionPay
 
     def charset= v
       UnionPay::PayParams['charset'] = v
+    end
+
+    def backend_url= v
+      UnionPay::PayParams['backEndUrl'] = v
     end
 
     def environment= e

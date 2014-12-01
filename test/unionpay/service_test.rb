@@ -10,7 +10,6 @@ class UnionPay::ServiceTest < MiniTest::Test
     param['orderNumber']   = '20131220151706000000'
     param['customerIp']    = '127.0.0.1'
     param['frontEndUrl']   = "http://www.example.com/sdk/utf8/front_notify.php"    #前台回调URL
-    param['backEndUrl']    = "http://www.example.com/sdk/utf8/back_notify.php"     #后台回调URL
     param['orderTime']     = '20131220151706'
     param['orderCurrency'] = UnionPay::CURRENCY_CNY                    #交易币种，CURRENCY_CNY=>人民币
     UnionPay::Service.front_pay(param)
@@ -24,7 +23,6 @@ class UnionPay::ServiceTest < MiniTest::Test
     param['orderAmount']           = 100;        #交易金额
     param['orderNumber']           = '20131220151706000000'
     param['frontEndUrl']           = ""     #前台回调URL, 后台交易可为空
-    param['backEndUrl']            = "http://www.example.com/sdk/utf8/back_notify.php"    #后台回调URL
     UnionPay::Service.backend_pay(param)
   end
 
@@ -42,7 +40,7 @@ class UnionPay::ServiceTest < MiniTest::Test
 
   def test_back_pay_service
     dev_form = generate_back_pay_service
-    pp "======Test back pay service:======"
+    pp "======Test back pay service:======rake"
     pp dev_form.post.body
     assert dev_form.post != nil
   end
@@ -80,7 +78,6 @@ class UnionPay::ServiceTest < MiniTest::Test
     param['qn'] = "201411251553160891667"
     param['orderAmount'] = 100
     param['frontEndUrl'] = ""
-    param['backEndUrl'] = "http://www.example.com/sdk/utf8/back_notify.php"
 
     cancel_preauth = UnionPay::Service.cancel_preauth(param)
     response = Rack::Utils.parse_nested_query(cancel_preauth.post.body)
@@ -96,7 +93,6 @@ class UnionPay::ServiceTest < MiniTest::Test
     param['qn'] = "201411251553160891667"
     param['orderAmount'] = 0
     param['frontEndUrl'] = ""
-    param['backEndUrl'] = "http://www.example.com/sdk/utf8/back_notify.php"
 
     cancel_preauth = UnionPay::Service.complete_preauth(param)
     response = Rack::Utils.parse_nested_query(cancel_preauth.post.body)
@@ -112,7 +108,6 @@ class UnionPay::ServiceTest < MiniTest::Test
     param['qn'] = "201411251553160891667"
     param['orderAmount'] = 100
     param['frontEndUrl'] = ""
-    param['backEndUrl'] = "http://www.example.com/sdk/utf8/back_notify.php"
 
     cancel_preauth = UnionPay::Service.cancel_complete_preauth(param)
     response = Rack::Utils.parse_nested_query(cancel_preauth.post.body)
