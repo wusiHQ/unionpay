@@ -18,21 +18,21 @@ module UnionPay
       new.instance_eval do
         param['orderTime']         ||= Time.now.strftime('%Y%m%d%H%M%S')         #交易时间, YYYYmmhhddHHMMSS
         param['orderCurrency']     ||= UnionPay::CURRENCY_CNY                    #交易币种，CURRENCY_CNY=>人民币
-        param['transType']         ||= UnionPay::CONSUME
+        param['transType']         ||= UnionPay::PRE_AUTH
         trans_type = param['transType']
         if [UnionPay::CONSUME, UnionPay::PRE_AUTH].include? trans_type
           @api_url = UnionPay.front_pay_url
           self.args = PayParamsEmpty.merge(PayParams).merge(param)
           @param_check = UnionPay::PayParamsCheck
         else
-          #Bad trans_type for front_pay. Use back_pay instead
-          raise("Bad trans_type for front_pay. Use back_pay instead")
+          #Bad trans_type for front_pay. Use backend_pay instead
+          raise("Bad trans_type for front_pay. Use backend_pay instead")
         end
         service
       end
     end
 
-    def self.back_pay(param)
+    def self.backend_pay(param)
       new.instance_eval do
         param['orderTime']         ||= Time.now.strftime('%Y%m%d%H%M%S')         #交易时间, YYYYmmhhddHHMMSS
         param['orderCurrency']     ||= UnionPay::CURRENCY_CNY                    #交易币种，CURRENCY_CNY=>人民币
@@ -40,8 +40,39 @@ module UnionPay
         @api_url = UnionPay.back_pay_url
         self.args = PayParamsEmpty.merge(PayParams).merge(param)
         @param_check = UnionPay::PayParamsCheck
-        trans_type = param['transType']
         service
+      end
+    end
+
+    def cancel_pay(param)
+      param['orderTime']         ||= Time.now.strftime('%Y%m%d%H%M%S')
+      param['orderCurrency']     ||= UnionPay::CURRENCY_CNY
+      param['transType']         ||= UnionPay::PRE_AUTH
+      @api_url = UnionPay.back_pay_url
+      self.args = PayParamsEmpty.merge(PayParams).merge(param)
+      @param_check = UnionPay::CancelParamsCheck
+      service
+    end
+
+    def self.complete_preauth(param)
+      new.instance_eval do
+        param['transType'] = UnionPay::PRE_AUTH_COMPLETE
+        cancel_pay(param)
+      end
+    end
+
+    #预授权撤销交易必须是对原始预授权交易的全额撤销。
+    def self.cancel_preauth(param)
+      new.instance_eval do
+        param['transType'] = UnionPay::PRE_AUTH_VOID
+        cancel_pay(param)
+      end
+    end
+
+    def self.cancel_complete_preauth(param)
+      new.instance_eval do
+        param['transType'] = UnionPay::PRE_AUTH_VOID_COMPLETE
+        cancel_pay(param)
       end
     end
 

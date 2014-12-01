@@ -20,14 +20,12 @@ class UnionPay::ServiceTest < MiniTest::Test
     #交易类型 退货=REFUND 或 消费撤销=CONSUME_VOID, 如果原始交易是PRE_AUTH，那么后台接口也支持对应的
     #  PRE_AUTH_VOID(预授权撤销), PRE_AUTH_COMPLETE(预授权完成), PRE_AUTH_VOID_COMPLETE(预授权完成撤销)
     param = {}
-    param['transType']             = UnionPay::REFUND
-    param['origQid']               = '201110281442120195882'; #原交易返回的qid, 从数据库中获取
-    param['orderAmount']           = 11000;        #交易金额
+    param['transType']             = UnionPay::PRE_AUTH
+    param['orderAmount']           = 100;        #交易金额
     param['orderNumber']           = '20131220151706000000'
-    param['customerIp']            = '127.0.0.1';  #用户IP
     param['frontEndUrl']           = ""     #前台回调URL, 后台交易可为空
     param['backEndUrl']            = "http://www.example.com/sdk/utf8/back_notify.php"    #后台回调URL
-    UnionPay::Service.back_pay(param)
+    UnionPay::Service.backend_pay(param)
   end
 
   def test_generate_form
@@ -44,6 +42,8 @@ class UnionPay::ServiceTest < MiniTest::Test
 
   def test_back_pay_service
     dev_form = generate_back_pay_service
+    pp "======Test back pay service:======"
+    pp dev_form.post.body
     assert dev_form.post != nil
   end
 
@@ -68,8 +68,56 @@ class UnionPay::ServiceTest < MiniTest::Test
     param['orderTime'] = "20141125155316"
     query = UnionPay::Service.query(param)
     response = Rack::Utils.parse_nested_query(query.post.body)
+
     UnionPay::Service.response response
     #end
   end
 
+  def test_cancel_preauth
+    param = {}
+    param['orderNumber'] = "01152521429447"
+    param['orderTime'] = "20141125155316"
+    param['qn'] = "201411251553160891667"
+    param['orderAmount'] = 100
+    param['frontEndUrl'] = ""
+    param['backEndUrl'] = "http://www.example.com/sdk/utf8/back_notify.php"
+
+    cancel_preauth = UnionPay::Service.cancel_preauth(param)
+    response = Rack::Utils.parse_nested_query(cancel_preauth.post.body)
+    pp "======Test cancel preauth======="
+    pp response
+    UnionPay::Service.response response
+  end
+
+  def test_finish_preauth
+    param = {}
+    param['orderNumber'] = "01152521429447"
+    param['orderTime'] = "20141125155316"
+    param['qn'] = "201411251553160891667"
+    param['orderAmount'] = 0
+    param['frontEndUrl'] = ""
+    param['backEndUrl'] = "http://www.example.com/sdk/utf8/back_notify.php"
+
+    cancel_preauth = UnionPay::Service.complete_preauth(param)
+    response = Rack::Utils.parse_nested_query(cancel_preauth.post.body)
+    pp "======Test finish preauth======"
+    pp response
+    UnionPay::Service.response response
+  end
+
+  def test_cancel_complete_preauth
+    param = {}
+    param['orderNumber'] = "01152521429447"
+    param['orderTime'] = "20141125155316"
+    param['qn'] = "201411251553160891667"
+    param['orderAmount'] = 100
+    param['frontEndUrl'] = ""
+    param['backEndUrl'] = "http://www.example.com/sdk/utf8/back_notify.php"
+
+    cancel_preauth = UnionPay::Service.cancel_complete_preauth(param)
+    response = Rack::Utils.parse_nested_query(cancel_preauth.post.body)
+    pp "======Test cancel complete preauth======="
+    pp response
+    UnionPay::Service.response response
+  end
 end

@@ -51,6 +51,17 @@ module UnionPay
     #"orderDescription"
   ]
 
+  CancelParamsCheck = [
+    "version",
+    "charset",
+    "transType",
+    "merId",
+    "backEndUrl",
+    "orderTime",
+    "orderNumber",
+    "orderAmount",
+    "qn"
+  ]
 
   # 查询请求必填字段检查
   QueryParamsCheck = [
