@@ -6,16 +6,15 @@ module UnionPay
   VERIFY_HTTPS_CERT = false
 
   Timezone = "Asia/Shanghai" #时区
-  Sign_method = "md5" #摘要算法，目前仅支持md5 (2011-08-22)
+  SignMethod = "MD5" #摘要算法，目前仅支持md5 (2011-08-22)
 
   # 支付请求预定义字段
   PayParams = {
     'version' => '1.0.0',
     'charset' => 'UTF-8', #UTF-8, GBK等
     'merId'   => '88888888', #商户填写
-    'acqCode' => '', #收单机构填写
-    'merCode' => '', #收单机构填写
-    'merAbbr' => '商户名称'
+    'merAbbr' => '商户名称',
+    'signMethod' => SignMethod
   }
 
   FRONT_PAY = 1
@@ -32,39 +31,24 @@ module UnionPay
   REFUND = "04"
   REGISTRATION = "71"
 
-  CURRENCY_CNY = "156"
+  CURRENCY_CNY = "156" #人民币
 
-  # 支付请求可为空字段（但必须填写）
+  # 支付请求可为空字段
   PayParamsEmpty = {
-    "origQid" => "",
-    "acqCode" => "",
-    "merCode" => "",
-    "commodityUrl" => "",
-    "commodityName" => "",
-    "commodityUnitPrice" => "",
-    "commodityQuantity" => "",
-    "commodityDiscount" => "",
-    "transferFee" => "",
-    "customerName" => "",
-    "defaultPayType" => "",
-    "defaultBankNumber" => "",
-    "transTimeout" => "",
-    "merReserved" => ""
+
   }
 
   # 支付请求必填字段检查
   PayParamsCheck = [
     "version",
     "charset",
-    "signMethod",
-    "signature",
     "transType",
     "merId",
     "backEndUrl",
     "orderTime",
     "orderNumber",
-    "orderAmount",
-    "orderDescription"
+    "orderAmount"
+    #"orderDescription"
   ]
 
 
@@ -98,30 +82,30 @@ module UnionPay
     "origOrderTime",
   ]
 
-  NotifyParamCheck = [
-    "version",
-    "charset",
-    "transType",
-    "respCode",
-    "respMsg",
-    "respTime",
-    "merId",
-    "merAbbr",
-    "orderNumber",
-    "traceNumber",
-    "traceTime",
-    "qid",
-    "orderAmount",
-    "orderCurrency",
-    "settleAmount",
-    "settleCurrency",
-    "settleDate",
-    "exchangeRate",
-    "exchangeDate",
-    "cupReserved",
-    "signMethod",
-    "signature",
-  ]
+  # NotifyParamCheck = [
+  #   "version",
+  #   "charset",
+  #   "transType",
+  #   "respCode",
+  #   "respMsg",
+  #   "respTime",
+  #   "merId",
+  #   "merAbbr",
+  #   "orderNumber",
+  #   "traceNumber",
+  #   "traceTime",
+  #   "qid",
+  #   "orderAmount",
+  #   "orderCurrency",
+  #   "settleAmount",
+  #   "settleCurrency",
+  #   "settleDate",
+  #   "exchangeRate",
+  #   "exchangeDate",
+  #   "cupReserved",
+  #   "signMethod",
+  #   "signature",
+  # ]
 
   SignIgnoreParams = [
     "signature",

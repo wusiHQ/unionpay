@@ -35,10 +35,10 @@ module UnionPay
       new.instance_eval do
         param['orderTime']         ||= Time.now.strftime('%Y%m%d%H%M%S')         #交易时间, YYYYmmhhddHHMMSS
         param['orderCurrency']     ||= UnionPay::CURRENCY_CNY                    #交易币种，CURRENCY_CNY=>人民币
-        param['transType']         ||= UnionPay::REFUND
+        param['transType']         ||= UnionPay::PRE_AUTH
         @api_url = UnionPay.back_pay_url
         self.args = PayParamsEmpty.merge(PayParams).merge(param)
-        @param_check = PayParamsCheck
+        @param_check = UnionPay::PayParamsCheck
         trans_type = param['transType']
         service
       end
@@ -51,6 +51,9 @@ module UnionPay
         end
         param.delete('signMethod')
         if param.delete('signature') != Service.sign(param)
+          pp "********"
+          pp Service.sign(param)
+          pp "********"
           raise('Bad signature returned!')
         end
         self.args = param
@@ -65,16 +68,6 @@ module UnionPay
         param['charset'] = UnionPay::PayParams['charset']
         param['merId'] = UnionPay::PayParams['merId']
 
-        if UnionPay.empty?(UnionPay::PayParams['merId']) && UnionPay.empty?(UnionPay::PayParams['acqCode'])
-          raise('merId and acqCode can\'t be both empty')
-        end
-        if !UnionPay.empty?(UnionPay::PayParams['acqCode'])
-          acq_code = UnionPay::PayParams['acqCode']
-          param['merReserved'] = "{acqCode=#{acq_code}}"
-        else
-          param['merReserved'] = ''
-        end
-
         self.args = param
         @param_check = UnionPay::QueryParamsCheck
 
@@ -84,7 +77,7 @@ module UnionPay
 
     def self.sign(param)
       sign_str = param.sort.map do |k,v|
-        "#{k}=#{v}&" unless UnionPay::SignIgnoreParams.include? k
+        "#{k}=#{v}&" unless UnionPay::SignIgnoreParams.include? k || v.blank?
       end.join
       Digest::MD5.hexdigest(sign_str + Digest::MD5.hexdigest(UnionPay.security_key))
     end
@@ -135,7 +128,7 @@ module UnionPay
 
       # signature
       self.args['signature']  = Service.sign(self.args)
-      self.args['signMethod'] = UnionPay::Sign_method
+      self.args['signMethod'] = UnionPay::SignMethod
 
       self
     end

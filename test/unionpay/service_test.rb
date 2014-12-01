@@ -1,4 +1,6 @@
 require 'test_helper'
+require 'pp'
+require 'cgi'
 
 class UnionPay::ServiceTest < MiniTest::Test
   def generate_form
@@ -29,7 +31,7 @@ class UnionPay::ServiceTest < MiniTest::Test
   end
 
   def test_generate_form
-    assert_not_nil generate_form.form(target: '_blank', id: 'form'){"<input type='submit' />"}
+    assert generate_form.form(target: '_blank', id: 'form'){"<input type='submit' />"} != nil
   end
 
   def test_front_pay_generate_form_with_different_environment
@@ -42,8 +44,9 @@ class UnionPay::ServiceTest < MiniTest::Test
 
   def test_back_pay_service
     dev_form = generate_back_pay_service
-    assert_not_nil dev_form.post
+    assert dev_form.post != nil
   end
+
   def test_response
     test = {
       'respCode' => '00',
@@ -58,16 +61,17 @@ class UnionPay::ServiceTest < MiniTest::Test
   end
 
   def test_query
-    assert_raise_message 'Bad signature returned!' do
-      param = {}
-      param['transType'] = UnionPay::CONSUME
-      param['orderNumber'] = "20111108150703852"
-      param['orderTime'] = "20111108150703"
-      UnionPay.environment = :production
-      query = UnionPay::Service.query(param)
-      res = query.post
-      UnionPay::Service.response res.body
-    end
+    #assert_raise_message 'Bad signature returned!' do
+    param = {}
+    param['transType'] = UnionPay::PRE_AUTH
+    param['orderNumber'] = "01152521429447"
+    param['orderTime'] = "20141125155316"
+    query = UnionPay::Service.query(param)
+    pp query
+    response = Rack::Utils.parse_nested_query(query.post.body)
+    pp response
+    UnionPay::Service.response response
+    #end
   end
 
 end
