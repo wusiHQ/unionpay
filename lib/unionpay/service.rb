@@ -52,9 +52,6 @@ module UnionPay
         end
         param.delete('signMethod')
         if param.delete('signature') != Service.sign(param)
-          pp "********"
-          pp Service.sign(param)
-          pp "********"
           raise('Bad signature returned!')
         end
         self.args = param
@@ -78,9 +75,8 @@ module UnionPay
 
     def self.sign(param)
       sign_str = param.sort.map do |k,v|
-        "#{k}=#{v}&" unless (UnionPay::SignIgnoreParams.include? k || v.blank?)
+        "#{k}=#{v}&" unless ((UnionPay::SignIgnoreParams.include? k) || v.blank?)
       end.join
-      pp sign_str
       Digest::MD5.hexdigest(sign_str + Digest::MD5.hexdigest(UnionPay.security_key))
     end
 

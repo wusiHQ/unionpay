@@ -67,9 +67,7 @@ class UnionPay::ServiceTest < MiniTest::Test
     param['orderNumber'] = "01152521429447"
     param['orderTime'] = "20141125155316"
     query = UnionPay::Service.query(param)
-    pp query
     response = Rack::Utils.parse_nested_query(query.post.body)
-    pp response
     UnionPay::Service.response response
     #end
   end
