@@ -60,7 +60,6 @@ module UnionPay
     "merId",
     "orderNumber",
     "orderTime",
-    "merReserved",
   ]
 
   # 商户保留域可能包含的字段
