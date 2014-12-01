@@ -3,6 +3,7 @@ require 'open-uri'
 require 'digest'
 require 'rack'
 require 'net/http'
+require 'active_support/core_ext/object/blank'
 
 module UnionPay
   RESP_SUCCESS  = '00' #返回成功
@@ -77,8 +78,9 @@ module UnionPay
 
     def self.sign(param)
       sign_str = param.sort.map do |k,v|
-        "#{k}=#{v}&" unless UnionPay::SignIgnoreParams.include? k || v.blank?
+        "#{k}=#{v}&" unless (UnionPay::SignIgnoreParams.include? k || v.blank?)
       end.join
+      pp sign_str
       Digest::MD5.hexdigest(sign_str + Digest::MD5.hexdigest(UnionPay.security_key))
     end
 
