@@ -127,7 +127,15 @@ module UnionPay
     end
 
     def post
+      args_str = join_args(self.args)
+      pp "Request:   #{args_str}"
       Net::HTTP.post_form URI(@api_url), self.args
+    end
+
+    def join_args(param)
+      param.map do |k,v|
+        "#{k}=#{v}&"
+      end.join
     end
 
     def [](key)
@@ -143,7 +151,6 @@ module UnionPay
       # signature
       self.args['signature']  = Service.sign(self.args)
       self.args['signMethod'] = UnionPay::SignMethod
-
       self
     end
   end
