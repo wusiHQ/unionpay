@@ -41,9 +41,9 @@ module UnionPay
         self.query_url = "http://www.epay.lxdns.com/UpopWeb/api/Query.action"
       ## 线上环境
       else
-        self.front_pay_url = "https://unionpaysecure.com/api/Pay.action"
-        self.back_pay_url = "https://besvr.unionpaysecure.com/api/BSPay.action"
-        self.query_url = "https://query.unionpaysecure.com/api/Query.action"
+        self.front_pay_url = "https://mgate.unionpay.com/gateway/merchant/trade"
+        self.back_pay_url = "https://mgate.unionpay.com/gateway/merchant/trade"
+        self.query_url = "https://mgate.unionpay.com/gateway/merchant/query"
       end
     end
   end
