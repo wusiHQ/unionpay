@@ -128,7 +128,7 @@ module UnionPay
 
     def post
       args_str = join_args(self.args)
-      pp "Request:  #{@api_url} #{args_str}"
+      puts "Request:  #{@api_url} #{args_str}"
       Net::HTTP.post_form URI(@api_url), self.args
     end
 
